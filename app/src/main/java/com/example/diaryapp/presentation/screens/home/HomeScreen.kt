@@ -40,7 +40,7 @@ fun HomeScreen(
                }
            },
            content = {
-
+                HomeContent(paddingValues = PaddingValues(), diaryNotes = mapOf(), onClick = {})
            }
        )
    }

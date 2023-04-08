@@ -14,6 +14,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.diaryapp.data.repository.MongoDB
 import com.example.diaryapp.presentation.components.DisplayAlertDialog
 import com.example.diaryapp.presentation.screens.auth.AuthenticationScreen
 import com.example.diaryapp.presentation.screens.auth.AuthenticationViewModel
@@ -114,6 +115,10 @@ fun NavGraphBuilder.homeRoute(
             onDeleteAllClicked = {},
             navigateToWrite = navigateToWrite,
         )
+
+        LaunchedEffect(key1 = Unit){
+            MongoDB.cofigureTheRealm()
+        }
 
         DisplayAlertDialog(
             title = "Sign Out",
