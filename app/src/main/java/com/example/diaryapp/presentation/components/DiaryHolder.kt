@@ -104,28 +104,28 @@ fun DiaryHolder(diary: Diary, onClick: (String) -> Unit) {
                     maxLines = 4,
                     overflow = TextOverflow.Ellipsis
                 )
-//                if (diary.images.isNotEmpty()) {
-//                    ShowGalleryButton(
-//                        galleryOpened = galleryOpened,
-//                        galleryLoading = galleryLoading,
-//                        onClick = {
-//                            galleryOpened = !galleryOpened
-//                        }
-//                    )
-//                }
-//                AnimatedVisibility(
-//                    visible = galleryOpened && !galleryLoading,
-//                    enter = fadeIn() + expandVertically(
-//                        animationSpec = spring(
-//                            dampingRatio = Spring.DampingRatioMediumBouncy,
-//                            stiffness = Spring.StiffnessLow
-//                        )
-//                    )
-//                ) {
-//                    Column(modifier = Modifier.padding(all = 14.dp)) {
-//                        Gallery(images = downloadedImages)
-//                    }
-//                }
+                if (diary.images.isNotEmpty()) {
+                    ShowGalleryButton(
+                        galleryOpened = galleryOpened,
+                        galleryLoading = galleryLoading,
+                        onClick = {
+                            galleryOpened = !galleryOpened
+                        }
+                    )
+                }
+                AnimatedVisibility(
+                    visible = galleryOpened && !galleryLoading,
+                    enter = fadeIn() + expandVertically(
+                        animationSpec = spring(
+                            dampingRatio = Spring.DampingRatioMediumBouncy,
+                            stiffness = Spring.StiffnessLow
+                        )
+                    )
+                ) {
+                    Column(modifier = Modifier.padding(all = 14.dp)) {
+                        Gallery(images = downloadedImages)
+                    }
+                }
             }
         }
     }
@@ -180,6 +180,18 @@ fun ShowGalleryButton(
     }
 }
 
+@Composable
+fun showGalleryButton(
+    galleryOpened: Boolean,
+    onClick: ()-> Unit
+){
+    TextButton(onClick = onClick) {
+        Text(
+            text = if(galleryOpened) "Hide Gallery" else "Show Gallery",
+            style = TextStyle(fontSize = MaterialTheme.typography.bodySmall.fontSize)
+        )
+    }
+}
 @Composable
 @Preview
 fun DiaryHolderPreview() {

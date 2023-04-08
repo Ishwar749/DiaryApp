@@ -1,8 +1,6 @@
 package com.example.diaryapp.model
 
-import android.os.Build
-import androidx.annotation.RequiresApi
-import io.realm.kotlin.Realm
+import com.example.diaryapp.util.toRealmInstant
 import io.realm.kotlin.ext.realmListOf
 import io.realm.kotlin.types.RealmInstant
 import io.realm.kotlin.types.RealmList
@@ -19,5 +17,5 @@ class Diary: RealmObject {
     var description: String = ""
     var mood: String = Mood.Neutral.name
     var images: RealmList<String> = realmListOf()
-    var date: RealmInstant = RealmInstant.from(System.currentTimeMillis(),0)
+    var date: RealmInstant = Instant.now().toRealmInstant()
 }
