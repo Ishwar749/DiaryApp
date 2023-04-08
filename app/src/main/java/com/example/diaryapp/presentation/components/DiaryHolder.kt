@@ -37,39 +37,39 @@ import java.time.Instant
 import java.util.*
 
 @Composable
-fun DiaryHolder(diary: Diary, onClick: (String) -> Unit) {
+fun DiaryHolder(diary: Diary,onClick: (String) -> Unit) {
     val localDensity = LocalDensity.current
     val context = LocalContext.current
     var componentHeight by remember { mutableStateOf(0.dp) }
     var galleryOpened by remember { mutableStateOf(false) }
-    var galleryLoading by remember { mutableStateOf(false) }
-    val downloadedImages = remember { mutableStateListOf<Uri>() }
+    //var galleryLoading by remember { mutableStateOf(false) }
+    //val downloadedImages = remember { mutableStateListOf<Uri>() }
 
-    LaunchedEffect(key1 = galleryOpened) {
-        if (galleryOpened && downloadedImages.isEmpty()) {
-            galleryLoading = true
-            fetchImagesFromFirebase(
-                remoteImagePaths = diary.images,
-                onImageDownload = { image ->
-                    downloadedImages.add(image)
-                },
-                onImageDownloadFailed = {
-                    Toast.makeText(
-                        context,
-                        "Images not uploaded yet." +
-                                "Wait a little bit, or try uploading again.",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    galleryLoading = false
-                    galleryOpened = false
-                },
-                onReadyToDisplay = {
-                    galleryLoading = false
-                    galleryOpened = true
-                }
-            )
-        }
-    }
+//    LaunchedEffect(key1 = galleryOpened) {
+//        if (galleryOpened && downloadedImages.isEmpty()) {
+//            galleryLoading = true
+//            fetchImagesFromFirebase(
+//                remoteImagePaths = diary.images,
+//                onImageDownload = { image ->
+//                    downloadedImages.add(image)
+//                },
+//                onImageDownloadFailed = {
+//                    Toast.makeText(
+//                        context,
+//                        "Images not uploaded yet." +
+//                                "Wait a little bit, or try uploading again.",
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+//                    galleryLoading = false
+//                    galleryOpened = false
+//                },
+//                onReadyToDisplay = {
+//                    galleryLoading = false
+//                    galleryOpened = true
+//                }
+//            )
+//        }
+//    }
 
     Row(modifier = Modifier
         .clickable(
@@ -107,14 +107,14 @@ fun DiaryHolder(diary: Diary, onClick: (String) -> Unit) {
                 if (diary.images.isNotEmpty()) {
                     ShowGalleryButton(
                         galleryOpened = galleryOpened,
-                        galleryLoading = galleryLoading,
+                        //galleryLoading = galleryLoading,
                         onClick = {
                             galleryOpened = !galleryOpened
                         }
                     )
                 }
                 AnimatedVisibility(
-                    visible = galleryOpened && !galleryLoading,
+                    visible = galleryOpened, //&& !galleryLoading,
                     enter = fadeIn() + expandVertically(
                         animationSpec = spring(
                             dampingRatio = Spring.DampingRatioMediumBouncy,
@@ -123,7 +123,7 @@ fun DiaryHolder(diary: Diary, onClick: (String) -> Unit) {
                     )
                 ) {
                     Column(modifier = Modifier.padding(all = 14.dp)) {
-                        Gallery(images = downloadedImages)
+                        Gallery(images = diary.images)
                     }
                 }
             }
@@ -167,39 +167,15 @@ fun DiaryHeader(moodName: String, time: Instant) {
 @Composable
 fun ShowGalleryButton(
     galleryOpened: Boolean,
-    galleryLoading: Boolean,
+   // galleryLoading: Boolean,
     onClick: () -> Unit
 ) {
     TextButton(onClick = onClick) {
         Text(
-            text = if (galleryOpened)
-                if (galleryLoading) "Loading" else "Hide Gallery"
-            else "Show Gallery",
+            text = if (galleryOpened) "Hide Gallery" else "Show Gallery",
+//                if (galleryLoading) "Loading" else "Hide Gallery"
+//            else "Show Gallery",
             style = TextStyle(fontSize = MaterialTheme.typography.bodySmall.fontSize)
         )
     }
-}
-
-@Composable
-fun showGalleryButton(
-    galleryOpened: Boolean,
-    onClick: ()-> Unit
-){
-    TextButton(onClick = onClick) {
-        Text(
-            text = if(galleryOpened) "Hide Gallery" else "Show Gallery",
-            style = TextStyle(fontSize = MaterialTheme.typography.bodySmall.fontSize)
-        )
-    }
-}
-@Composable
-@Preview
-fun DiaryHolderPreview() {
-    DiaryHolder(diary = Diary().apply {
-        title = "My Diary"
-        description =
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
-        mood = Mood.Happy.name
-        images = realmListOf("", "")
-    }, onClick = {})
 }
