@@ -15,10 +15,12 @@ import com.example.diaryapp.util.Constants.APP_ID
 import io.realm.kotlin.mongodb.App
 
 class MainActivity : ComponentActivity() {
+
+    var keepSplashOpened = true
     @ExperimentalMaterial3Api
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        installSplashScreen()
+        installSplashScreen().setKeepOnScreenCondition{keepSplashOpened}
         WindowCompat.setDecorFitsSystemWindows(window, false)
         //MongoDB.configureTheRealm()
         setContent {
@@ -26,7 +28,8 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 SetupNavGraph(
                     startDestination = getStartDestination(),
-                    navController = navController
+                    navController = navController,
+                    onDataLoaded = {keepSplashOpened = false}
                 )
             }
         }
