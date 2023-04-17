@@ -1,5 +1,7 @@
 package com.example.diaryapp.navigation
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -9,11 +11,13 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.diaryapp.model.Diary
 import com.example.diaryapp.presentation.components.DisplayAlertDialog
 import com.example.diaryapp.presentation.screens.auth.AuthenticationScreen
 import com.example.diaryapp.presentation.screens.auth.AuthenticationViewModel
 import com.example.diaryapp.presentation.screens.home.HomeScreen
 import com.example.diaryapp.presentation.screens.home.HomeViewModel
+import com.example.diaryapp.presentation.screens.write.WriteScreen
 import com.example.diaryapp.util.Constants.APP_ID
 import com.example.diaryapp.util.Constants.WRITE_SCREEN_ARGUMENT_KEY
 import com.example.diaryapp.util.RequestState
@@ -52,7 +56,11 @@ fun SetupNavGraph(
             },
             onDataLoaded = onDataLoaded
         )
-        writeRoute()
+        writeRoute(
+            onBackPressed = {
+                navController.popBackStack()
+            }
+        )
     }
 }
 
@@ -158,7 +166,8 @@ fun NavGraphBuilder.homeRoute(
     }
 }
 
-fun NavGraphBuilder.writeRoute() {
+@OptIn(ExperimentalFoundationApi::class)
+fun NavGraphBuilder.writeRoute(onBackPressed: () -> Unit) {
     composable(
         route = Screen.Write.route,
         arguments = listOf(navArgument(name = WRITE_SCREEN_ARGUMENT_KEY) {
@@ -167,6 +176,12 @@ fun NavGraphBuilder.writeRoute() {
             defaultValue = null
         })
     ) {
-
+        val pagerState = rememberPagerState()
+        WriteScreen(
+            selectedDiary = null,
+            pagerState = pagerState,
+            onBackPressed = onBackPressed,
+            onDeleteConfirmed = {}
+        )
     }
 }
