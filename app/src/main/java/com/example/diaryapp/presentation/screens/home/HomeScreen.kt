@@ -27,7 +27,8 @@ fun HomeScreen(
     onMenuClicked: () -> Unit,
     onSignOutClicked: () -> Unit,
     onDeleteAllClicked: () -> Unit,
-    navigateToWrite: () -> Unit
+    navigateToWrite: () -> Unit,
+    navigateToWriteWithArgs: (String) -> Unit
 ) {
     var padding by remember { mutableStateOf(PaddingValues()) }
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -39,7 +40,7 @@ fun HomeScreen(
         Scaffold(
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             topBar = {
-                HomeTopBar(scrollBehavior = scrollBehavior,onMenuClicked = onMenuClicked)
+                HomeTopBar(scrollBehavior = scrollBehavior, onMenuClicked = onMenuClicked)
             },
             floatingActionButton = {
                 FloatingActionButton(
@@ -59,7 +60,8 @@ fun HomeScreen(
                         HomeContent(
                             paddingValues = it,
                             diaryNotes = diaries.data,
-                            onClick = {})
+                            onClick = navigateToWriteWithArgs
+                        )
                     }
                     is RequestState.Error -> {
                         EmptyPage(
