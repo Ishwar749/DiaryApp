@@ -30,7 +30,7 @@ object MongoDB : MongoRepository {
             val config = SyncConfiguration.Builder(user, setOf(Diary::class))
                 .initialSubscriptions { sub ->
                     add(
-                        query = sub.query<Diary>("ownerId == $0", user.identity),
+                        query = sub.query<Diary>("ownerId == $0", user.id),
                         name = "User's Diaries"
                     )
                 }
@@ -43,7 +43,7 @@ object MongoDB : MongoRepository {
     override fun getAllDiaries(): Flow<Diaries> {
         return if (user != null) {
             try {
-                realm.query<Diary>(query = "ownerId == $0", user.identity)
+                realm.query<Diary>(query = "ownerId == $0", user.id)
                     .sort(property = "date", sortOrder = Sort.DESCENDING)
                     .asFlow()
                     .map { result ->
@@ -85,6 +85,26 @@ object MongoDB : MongoRepository {
                     RequestState.Success(data = addedDiary)
                 } catch (e: Exception) {
                     RequestState.Error(e)
+                }
+            }
+        } else {
+            RequestState.Error(UserNotAuthenticatedException())
+        }
+    }
+
+    override suspend fun updateDiary(diary: Diary): RequestState<Diary> {
+        return if (user != null) {
+            realm.write {
+                val queriedDiary = query<Diary>(query = "_id == $0", diary._id).first().find()
+                if (queriedDiary != null) {
+                    queriedDiary.title = diary.title
+                    queriedDiary.description = diary.description
+                    queriedDiary.mood = diary.mood
+                    queriedDiary.images = diary.images
+                    queriedDiary.date = diary.date
+                    RequestState.Success(data = queriedDiary)
+                } else {
+                    RequestState.Error(error = Exception("Queried diary dose not exist"))
                 }
             }
         } else {
