@@ -20,7 +20,8 @@ fun WriteScreen(
     onTitleChanged: (String) -> Unit,
     onDescriptionChanged: (String) -> Unit,
     onBackPressed: () -> Unit,
-    onDeleteConfirmed: () -> Unit
+    onDeleteConfirmed: () -> Unit,
+    onSaveClicked: (Diary) -> Unit
 ) {
     // Scroll to the mood of the selected diary
     LaunchedEffect(key1 = uiState.mood){
@@ -38,12 +39,14 @@ fun WriteScreen(
         },
         content = {
             WriteContent(
+                uiState = uiState,
                 paddingValues = it,
                 pagerState = pagerState,
                 title = uiState.title,
                 onTitleChanged = onTitleChanged,
                 description = uiState.description,
-                onDescriptionChanged = onDescriptionChanged
+                onDescriptionChanged = onDescriptionChanged,
+                onSaveClicked = onSaveClicked
             )
         }
     )
