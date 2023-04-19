@@ -1,10 +1,12 @@
 package com.example.diaryapp.navigation
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -184,6 +186,7 @@ fun NavGraphBuilder.writeRoute(onBackPressed: () -> Unit) {
         })
     ) {
         val viewModel: WriteViewModel = viewModel()
+        val context = LocalContext.current
         val uiState = viewModel.uiState
         val pagerState = rememberPagerState()
         val pageNumber by remember { derivedStateOf { pagerState.currentPage } }
@@ -198,13 +201,25 @@ fun NavGraphBuilder.writeRoute(onBackPressed: () -> Unit) {
             onTitleChanged = { viewModel.setTitle(title = it) },
             onDescriptionChanged = { viewModel.setDescription(description = it) },
             onBackPressed = onBackPressed,
-            onDeleteConfirmed = {},
-            onDateTimeUpdated = { viewModel.updateDateTime(zonedDateTime = it)},
+            onDeleteConfirmed = {
+                viewModel.deleteDiary(
+                    onSuccess = {
+                        Toast.makeText(context, "Deleted", Toast.LENGTH_SHORT).show()
+                        onBackPressed()
+                    },
+                    onError = { message ->
+                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                    }
+                )
+            },
+            onDateTimeUpdated = { viewModel.updateDateTime(zonedDateTime = it) },
             onSaveClicked = {
                 viewModel.upsertDiary(
                     diary = it.apply { mood = Mood.values()[pageNumber].name },
                     onSuccess = { onBackPressed() },
-                    onError = {}
+                    onError = { message ->
+                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                    }
                 )
             }
         )
