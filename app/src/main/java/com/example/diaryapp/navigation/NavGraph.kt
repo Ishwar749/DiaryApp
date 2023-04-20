@@ -14,10 +14,8 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.diaryapp.model.GalleryImage
 import com.example.diaryapp.model.Mood
 import com.example.diaryapp.model.RequestState
-import com.example.diaryapp.model.rememberGalleryState
 import com.example.diaryapp.presentation.components.DisplayAlertDialog
 import com.example.diaryapp.presentation.screens.auth.AuthenticationScreen
 import com.example.diaryapp.presentation.screens.auth.AuthenticationViewModel
@@ -195,7 +193,7 @@ fun NavGraphBuilder.writeRoute(onBackPressed: () -> Unit) {
         val context = LocalContext.current
         val uiState = viewModel.uiState
         val pagerState = rememberPagerState()
-        val galleryState = rememberGalleryState()
+        val galleryState = viewModel.galleryState
         val pageNumber by remember { derivedStateOf { pagerState.currentPage } }
 
         LaunchedEffect(key1 = uiState) {
@@ -231,12 +229,8 @@ fun NavGraphBuilder.writeRoute(onBackPressed: () -> Unit) {
                 )
             },
             onImageSelect = {
-                galleryState.addImage(
-                    GalleryImage(
-                        image = it,
-                        remoteImagePath = ""
-                    )
-                )
+                val type = context.contentResolver.getType(it)?.split("/")?.last() ?: "jpg"
+                viewModel.addImage(image = it, imageType = type)
             }
         )
     }
