@@ -1,10 +1,7 @@
 package com.example.diaryapp.util
 
 import android.net.Uri
-import android.util.Log
-import androidx.core.net.toUri
 import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.ktx.storageMetadata
 import io.realm.kotlin.types.RealmInstant
 import java.time.Instant
 
@@ -23,7 +20,6 @@ fun fetchImagesFromFirebase(
             if (remoteImagePath.trim().isNotEmpty()) {
                 FirebaseStorage.getInstance().reference.child(remoteImagePath.trim()).downloadUrl
                     .addOnSuccessListener {
-                        Log.d("DownloadURL", "$it")
                         onImageDownload(it)
                         if (remoteImagePaths.lastIndexOf(remoteImagePaths.last()) == index) {
                             onReadyToDisplay()
