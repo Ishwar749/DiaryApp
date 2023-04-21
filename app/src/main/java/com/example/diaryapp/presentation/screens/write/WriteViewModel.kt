@@ -7,7 +7,9 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.diaryapp.data.database.ImageToDeleteDao
 import com.example.diaryapp.data.database.ImageToUploadDao
+import com.example.diaryapp.data.database.entity.ImageToDelete
 import com.example.diaryapp.data.database.entity.ImageToUpload
 import com.example.diaryapp.data.repository.MongoDB
 import com.example.diaryapp.model.*
@@ -31,7 +33,8 @@ import javax.inject.Inject
 @HiltViewModel
 class WriteViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    private val imageToUploadDao: ImageToUploadDao
+    private val imageToUploadDao: ImageToUploadDao,
+    private val imageToDeleteDao: ImageToDeleteDao
 ) : ViewModel() {
 
     val galleryState = GalleryState()
@@ -217,10 +220,24 @@ class WriteViewModel @Inject constructor(
         if (images != null) {
             images.forEach { remotePath ->
                 storage.child(remotePath).delete()
+                    .addOnFailureListener {
+                        viewModelScope.launch(Dispatchers.IO) {
+                            imageToDeleteDao.addImageToDelete(
+                                ImageToDelete(remoteImagePath = remotePath)
+                            )
+                        }
+                    }
             }
         } else {
-            galleryState.imagesToBeDeleted.map { it.remoteImagePath }.forEach {
-                storage.child(it).delete()
+            galleryState.imagesToBeDeleted.map { it.remoteImagePath }.forEach { remotePath ->
+                storage.child(remotePath).delete()
+                    .addOnFailureListener {
+                        viewModelScope.launch(Dispatchers.IO) {
+                            imageToDeleteDao.addImageToDelete(
+                                ImageToDelete(remoteImagePath = remotePath)
+                            )
+                        }
+                    }
             }
         }
     }
