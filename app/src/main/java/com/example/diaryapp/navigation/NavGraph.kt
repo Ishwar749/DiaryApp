@@ -232,7 +232,8 @@ fun NavGraphBuilder.writeRoute(onBackPressed: () -> Unit) {
             onImageSelect = {
                 val type = context.contentResolver.getType(it)?.split("/")?.last() ?: "jpg"
                 viewModel.addImage(image = it, imageType = type)
-            }
+            },
+            onImageDeleteClicked = {}
         )
     }
 }
