@@ -1,6 +1,6 @@
 # DiaryApp
 
-The project is a Diary app built on the latest Android technologies including ROOM, Jetpack Compose, Material 3, Kotlin Coroutines, Dagger-Hilt, One-Tap Sign in with Google, Firebase-MongoDB Authentication and Storage.
+It is a Diary app built on the latest Android technologies including ROOM, Jetpack Compose UI, Material 3, Kotlin Coroutines, Dagger-Hilt, One-Tap Sign in with Google, Realm SDK, MVVM and Firebase/Mongo Authentication and Storage. It has been refactored to a multi-modular architecture.
 
 
 
